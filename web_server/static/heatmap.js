@@ -1,5 +1,18 @@
 var map, pointarray, heatmap;
 
+function processCondition(dayDiff){
+  if (dayDiff === -1) {
+    condition = $('#map').data('condition');
+    day = $('#map').data('day');
+  }
+  else{
+    condition = forecast.forecast.simpleforecast.forecastday[dayDiff].conditions;
+    day = forecast.forecast.simpleforecast.forecastday[dayDiff].date.weekday;
+  }
+  condition =  condition.replace('Chance of ', '');
+  renderHeatmap(condition, day);
+};
+
 function main() {
   // Map center
   var mapCenter = new google.maps.LatLng(40.792128, -73.973091);
@@ -15,10 +28,21 @@ function main() {
   // Render basemap
   map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
- renderHeatmap($('#map').data('condition'));
+ renderHeatmap($('#map').data('condition'),$('#map').data('day'));
+
+  $( "#datepicker" ).datepicker({
+  minDate: 0,
+  maxDate: 9,
+  onSelect: function(date){
+    var today = new Date();
+    var datePicked = Date.parse(date);
+    var dayDiff = Math.round((datePicked -  today)/86400000) + 1; //Number of miliseconds per day
+    var condition = processCondition(dayDiff);
+  }
+  });
 }
 
-function renderHeatmap(condition){
+function renderHeatmap(condition, day){
   if (typeof heatmap !== "undefined" && heatmap !== null){
     heatmap.setMap(null);
   }
@@ -28,7 +52,7 @@ function renderHeatmap(condition){
   sql.execute("SELECT * " +
               "FROM aggregated_data " +
               "WHERE conditions='" + condition + "'" +
-              "AND day='" + $('#map').data('day') + "'").done(function(data) {
+              "AND day='" + day + "'").done(function(data) {
 
     // Transform data format
     data = data.features.map(function(r) {

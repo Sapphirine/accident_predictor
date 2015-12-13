@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block body %}
 
-<div id="map"></div>
+<div id="map" data-condition='{{map_input['conditions']}}' data-day='{{map_input['day']}}'></div>
 
 <!-- Include cartodb.css style -->
 <link rel=stylesheet href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css" />
@@ -12,50 +12,7 @@
 <!-- Include Google Maps library -->
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDkOF-XCvogzQK8CQH-cMcE4gIhLQhN4Pg&libraries=visualization"></script>
 
-<script>
-  var map, pointarray, heatmap;
-
-  function main() {
-    // Map center
-    var mapCenter = new google.maps.LatLng(40.792128, -73.973091);
-
-    // Map options
-    var mapOptions = {
-      zoom: 12,
-      center: mapCenter,
-      disableDefaultUI: true,
-      mapTypeId: google.maps.MapTypeId.ROADMAP
-    }
-
-    // Render basemap
-    map = new google.maps.Map(document.getElementById("map"), mapOptions);
-
-    // SQL query
-    var sql = cartodb.SQL({ user: 'jpcolomer', format: 'geojson'});
-    sql.execute("SELECT * " +
-                "FROM aggregated_data " +
-                "WHERE conditions='{{map_input['conditions']}}' " +
-                "AND day='{{map_input['day']}}'").done(function(data) {
-
-      // Transform data format
-      data = data.features.map(function(r) {
-        return {
-          location: new google.maps.LatLng(r.geometry.coordinates[1],
-                                           r.geometry.coordinates[0]),
-          weight: r.properties.count
-        };
-      });
-      var pointArray = new google.maps.MVCArray(data);
-
-      // Create heatmap
-      heatmap = new google.maps.visualization.HeatmapLayer({
-        data: pointArray
-      });
-      heatmap.set('radius', heatmap.get('radius') ? null : 15);
-      heatmap.set('opacity', heatmap.get('opacity') ? null : .75);
-      heatmap.setMap(map);
-    });
-  }
-  window.onload = main;
-</script>
+<!-- Include JQuery library -->
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script  type="text/javascript" src="{{ url_for('static', filename='heatmap.js') }}"></script>
 {% endblock %}

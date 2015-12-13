@@ -21,7 +21,7 @@ class WeatherApi:
 
     api_url = ("http://api.openweathermap.org/data/2.5/weather" +
                "?zip=" + zip_code +
-               "&appid=" + os.environ['WEATHER_API_KEY'])
+               "&appid=" + api_key)
 
     print api_url
 

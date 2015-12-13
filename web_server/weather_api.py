@@ -23,8 +23,6 @@ class WeatherApi:
                "?zip=" + zip_code +
                "&appid=" + api_key)
 
-    print api_url
-
     api_response = urllib2.urlopen(api_url)
     data = json.load(api_response)
     return WeatherApi.__get_condition(data[u"weather"][0][u"id"])

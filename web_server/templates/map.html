@@ -1,39 +1,59 @@
 {% extends "layout.html" %}
 {% block body %}
+
 <div id="map"></div>
+
+<!-- Include cartodb.css style -->
 <link rel=stylesheet href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css" />
+
+<!-- Include cartodb.js library -->
 <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
+
+<!-- Include Google Maps library -->
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDkOF-XCvogzQK8CQH-cMcE4gIhLQhN4Pg&libraries=visualization"></script>
+
 <script>
-  var layertemp;
+  var map, pointarray, heatmap;
+
   function main() {
-    var map = L.map('map', {
-      center: [40.792128, -73.973091],
+    // Map center
+    var mapCenter = new google.maps.LatLng(40.792128, -73.973091);
+
+    // Map options
+    var mapOptions = {
       zoom: 12,
-      zoomControl: true,
-      // shareable: true,
-      // title: true,
-      // description: true,
-      // search: true,
-      // tiles_loader: true,
-    });
+      center: mapCenter,
+      disableDefaultUI: true,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    }
 
-    L.tileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
-      attribution: 'CartoDB'
-    }).addTo(map);
+    // Render basemap
+    map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
-    cartodb.createLayer(map, {
-      user_name: 'jpcolomer',
-      type: 'cartodb',
-      sublayers: [{
-        sql: "SELECT * FROM aggregated_data " +
-             "WHERE conditions='{{map_input['conditions']}}' " +
-             "AND day='{{map_input['day']}}'",
-        cartocss: '#node-style {marker-fill: #BF360C;}'
-      }]
-    })
-    .addTo(map) // add the layer to our map which already contains 1 sublayer
-    .done(function(layer) {
-      // TODO
+    // SQL query
+    var sql = cartodb.SQL({ user: 'jpcolomer', format: 'geojson'});
+    sql.execute("SELECT * " +
+                "FROM aggregated_data " +
+                "WHERE conditions='{{map_input['conditions']}}' " +
+                "AND day='{{map_input['day']}}'").done(function(data) {
+
+      // Transform data format
+      data = data.features.map(function(r) {
+        return {
+          location: new google.maps.LatLng(r.geometry.coordinates[1],
+                                           r.geometry.coordinates[0]),
+          weight: r.properties.count
+        };
+      });
+      var pointArray = new google.maps.MVCArray(data);
+
+      // Create heatmap
+      heatmap = new google.maps.visualization.HeatmapLayer({
+        data: pointArray
+      });
+      heatmap.set('radius', heatmap.get('radius') ? null : 15);
+      heatmap.set('opacity', heatmap.get('opacity') ? null : .75);
+      heatmap.setMap(map);
     });
   }
   window.onload = main;

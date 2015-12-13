@@ -1,4 +1,14 @@
 var map, pointarray, heatmap;
+var manhattan = {lat: 40.792128, lng: -73.973091};
+
+function centerMap(map) {
+  var centerControlDiv = document.getElementById('center-button');
+  var controlUI = document.getElementById('center-ui');
+  controlUI.addEventListener('click', function() {
+    map.setCenter(manhattan);
+  });
+  map.controls[google.maps.ControlPosition.TOP_CENTER].push(centerControlDiv);
+}
 
 function main() {
   // Map center
@@ -8,14 +18,14 @@ function main() {
   var mapOptions = {
     zoom: 12,
     center: mapCenter,
-    disableDefaultUI: true,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   }
 
   // Render basemap
   map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
- renderHeatmap($('#map').data('condition'));
+  renderHeatmap($('#map').data('condition'));
+  centerMap(map);
 }
 
 function renderHeatmap(condition){
@@ -30,8 +40,8 @@ function renderHeatmap(condition){
               "WHERE conditions='" + condition + "'" +
               "AND day='" + $('#map').data('day') + "'").done(function(data) {
 
-    // Transform data format
-    data = data.features.map(function(r) {
+      // Transform data format
+      data = data.features.map(function(r) {
       return {
         location: new google.maps.LatLng(r.geometry.coordinates[1],
                                          r.geometry.coordinates[0]),

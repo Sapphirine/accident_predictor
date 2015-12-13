@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+{% block body %}
+<div id="map"></div>
+<link rel=stylesheet href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css" />
+<script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
+<script>
+  var layertemp;
+  function main() {
+    var map = L.map('map', {
+      center: [40.792128, -73.973091],
+      zoom: 12,
+      zoomControl: true,
+      // shareable: true,
+      // title: true,
+      // description: true,
+      // search: true,
+      // tiles_loader: true,
+    });
+
+    L.tileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
+      attribution: 'CartoDB'
+    }).addTo(map);
+
+    cartodb.createLayer(map, {
+      user_name: 'jpcolomer',
+      type: 'cartodb',
+      sublayers: [{
+        sql: "SELECT * FROM aggregated_data " +
+             "WHERE conditions='{{map_input['conditions']}}' " +
+             "AND day='{{map_input['day']}}'",
+        cartocss: '#node-style {marker-fill: #BF360C;}'
+      }]
+    })
+    .addTo(map) // add the layer to our map which already contains 1 sublayer
+    .done(function(layer) {
+      // TODO
+    });
+  }
+  window.onload = main;
+</script>
+{% endblock %}

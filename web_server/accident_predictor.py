@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 from weather_api import WeatherApi
 import datetime
 import os
@@ -14,6 +14,10 @@ def index():
     "conditions": WeatherApi.current_weather_condition()
   }
   return render_template("map.html", map_input = map_input, title = "Map")
+
+@app.route("/forecast.json")
+def weather_forecast():
+  return jsonify(WeatherApi.forecast_weather())
 
 if __name__ == "__main__":
   app.run()

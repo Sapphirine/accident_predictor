@@ -1,5 +1,16 @@
 var map, pointarray, heatmap, forecast;
+var manhattan = {lat: 40.792128, lng: -73.973091};
 
+
+function centerMap(map) {
+  var centerControlDiv = document.getElementById('center-button');
+  var controlUI = document.getElementById('center-ui');
+  controlUI.addEventListener('click', function() {
+    map.setCenter(manhattan);
+    map.setZoom(12);
+  });
+  map.controls[google.maps.ControlPosition.TOP_CENTER].push(centerControlDiv);
+}
 function setForecast(dayDiff){
   $.getJSON("forecast.json",function(data){
     forecast = data;
@@ -38,14 +49,14 @@ function main() {
   var mapOptions = {
     zoom: 12,
     center: mapCenter,
-    disableDefaultUI: true,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   }
 
   // Render basemap
   map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
- renderHeatmap($('#map').data('condition'),$('#map').data('day'));
+  renderHeatmap($('#map').data('condition'),$('#map').data('day'));
+  centerMap(map);
 
   $( "#datepicker" ).datepicker({
   minDate: 0,
@@ -71,8 +82,8 @@ function renderHeatmap(condition, day){
               "WHERE conditions='" + condition + "'" +
               "AND day='" + day + "'").done(function(data) {
 
-    // Transform data format
-    data = data.features.map(function(r) {
+      // Transform data format
+      data = data.features.map(function(r) {
       return {
         location: new google.maps.LatLng(r.geometry.coordinates[1],
                                          r.geometry.coordinates[0]),

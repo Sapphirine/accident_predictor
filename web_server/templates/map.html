@@ -2,6 +2,11 @@
 {% block body %}
 <div id="datepicker_wrapper">Date: <input type="text" id="datepicker"></div>
 <div id="map" data-condition='{{map_input['conditions']}}' data-day='{{map_input['day']}}'></div>
+<div id="center-button">
+  <div id="center-ui" title="Click to recenter the map">
+    <div id="center-text">Center Map</div>
+  </div>
+</div>
 
 <!-- Include cartodb.css style -->
 <link rel=stylesheet href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css" />

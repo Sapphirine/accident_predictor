@@ -3,3 +3,11 @@ html, body, #map {
   padding: 0;
   margin: 0;
 }
+
+#datepicker_wrapper {
+    position: absolute;
+    z-index: 999;
+    right: 1%;
+    top: 1%;
+    background: rgba(0,0,0,.2);
+}

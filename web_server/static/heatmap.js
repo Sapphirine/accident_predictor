@@ -1,4 +1,10 @@
-var map, pointarray, heatmap;
+var map, pointarray, heatmap, forecast;
+
+function setForecast(){
+  $.getJSON("forecast.json",function(data){
+    forecast = data;
+  });
+};
 
 function processCondition(dayDiff){
   if (dayDiff === -1) {
@@ -6,6 +12,9 @@ function processCondition(dayDiff){
     day = $('#map').data('day');
   }
   else{
+    if (typeof forecast !== "undefined" && forecast !== null) {
+      setForecast();
+    }
     condition = forecast.forecast.simpleforecast.forecastday[dayDiff].conditions;
     day = forecast.forecast.simpleforecast.forecastday[dayDiff].date.weekday;
   }

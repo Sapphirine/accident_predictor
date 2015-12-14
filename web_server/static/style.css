@@ -24,9 +24,29 @@ html, body, #map {
 }
 
 #datepicker_wrapper {
+    background-color: #fff;
+    font-family: "Roboto", Arial, sans-serif;
+    border: 2px solid #fff;
+    border-radius: 3px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.3);
+    margin-bottom: 22px;
     position: absolute;
     z-index: 999;
-    right: 1%;
-    top: 1%;
-    background: rgba(0,0,0,.2);
+    right: 0%;
+    top: 0%;
+    font-size: 16px;
+    line-height: 38px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+#datepicker {
+  line-height: 20px;
+  -moz-border-radius:3px; /* Firefox */
+  -webkit-border-radius: 3px; /* Safari, Chrome */
+  -khtml-border-radius: 3px; /* KHTML */
+  border-radius: 3px; /* CSS3 */
+  border: 1px solid #ccc;
+  font-family: "Roboto", Arial, sans-serif;
+  font-size: 14px;
 }

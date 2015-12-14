@@ -22,7 +22,7 @@ function setForecast(dayDiff){
 };
 
 function processCondition(dayDiff){
-  if (dayDiff === -1) {
+  if (dayDiff <= 0) {
     condition = $('#map').data('condition');
     day = $('#map').data('day');
     condition =  condition.replace('Chance of ', '');
@@ -67,7 +67,7 @@ function main() {
     var dayDiff = Math.round((datePicked -  today)/86400000) + 1; //Number of miliseconds per day
     var condition = processCondition(dayDiff);
   }
-  });
+  }).datepicker("setDate", new Date());
 }
 
 function renderHeatmap(condition, day){

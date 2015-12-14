@@ -7,6 +7,7 @@ function centerMap(map) {
   var controlUI = document.getElementById('center-ui');
   controlUI.addEventListener('click', function() {
     map.setCenter(manhattan);
+    map.setZoom(12);
   });
   map.controls[google.maps.ControlPosition.TOP_CENTER].push(centerControlDiv);
 }

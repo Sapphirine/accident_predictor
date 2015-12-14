@@ -32,5 +32,5 @@ class WeatherApi:
     """
     Returns a dict with the forecast weather
     """
-    return WeatherApi._weather_api_call("forecast")
+    return WeatherApi._weather_api_call("forecast10day")
 

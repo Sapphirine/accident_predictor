@@ -1,8 +1,12 @@
 var map, pointarray, heatmap, forecast;
 
-function setForecast(){
+function setForecast(dayDiff){
   $.getJSON("forecast.json",function(data){
     forecast = data;
+    var condition = forecast.forecast.simpleforecast.forecastday[dayDiff].conditions;
+    var day = forecast.forecast.simpleforecast.forecastday[dayDiff].date.weekday;
+    condition =  condition.replace('Chance of ', '');
+    renderHeatmap(condition, day);
   });
 };
 
@@ -10,16 +14,20 @@ function processCondition(dayDiff){
   if (dayDiff === -1) {
     condition = $('#map').data('condition');
     day = $('#map').data('day');
+    condition =  condition.replace('Chance of ', '');
+    renderHeatmap(condition, day);
   }
   else{
     if (typeof forecast !== "undefined" && forecast !== null) {
-      setForecast();
+      condition = forecast.forecast.simpleforecast.forecastday[dayDiff].conditions;
+      day = forecast.forecast.simpleforecast.forecastday[dayDiff].date.weekday;
+      condition =  condition.replace('Chance of ', '');
+      renderHeatmap(condition, day);
     }
-    condition = forecast.forecast.simpleforecast.forecastday[dayDiff].conditions;
-    day = forecast.forecast.simpleforecast.forecastday[dayDiff].date.weekday;
+    else{
+      setForecast(dayDiff);
+    }
   }
-  condition =  condition.replace('Chance of ', '');
-  renderHeatmap(condition, day);
 };
 
 function main() {
